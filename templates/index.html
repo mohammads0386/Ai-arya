@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>آریا — دستیار هوشمند</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0c0c0f;--surface:#141418;--surface2:#1a1a20;
+  --border:#2a2a35;--border2:#3a3a48;
+  --accent:#7c6fff;--accent2:#a78bfa;
+  --text:#f0eeff;--text2:#9490b5;--text3:#5a5675;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Vazirmatn',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;height:100vh}
+
+header{display:flex;align-items:center;gap:14px;padding:14px 22px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}
+.ava{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#7c6fff,#a855f7);display:flex;align-items:center;justify-content:center;font-size:1.3rem;position:relative;flex-shrink:0}
+.ava::after{content:'';position:absolute;bottom:1px;right:1px;width:11px;height:11px;border-radius:50%;background:#22c55e;border:2px solid var(--surface)}
+.hinfo h1{font-size:1.05rem;font-weight:700}
+.hinfo p{font-size:.78rem;color:var(--text2)}
+.hbtn{margin-right:auto;background:var(--surface2);border:1px solid var(--border);color:var(--text2);border-radius:10px;padding:6px 14px;cursor:pointer;font-size:.8rem;font-family:inherit;display:none;transition:all .2s}
+.hbtn:hover{border-color:var(--accent);color:var(--accent)}
+
+.chips{display:flex;gap:8px;flex-wrap:wrap;padding:10px 18px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}
+.chip{background:var(--surface2);border:1px solid var(--border);color:var(--text2);border-radius:20px;padding:5px 14px;font-size:.78rem;cursor:pointer;white-space:nowrap;font-family:inherit;transition:all .2s}
+.chip:hover{border-color:var(--accent);color:var(--accent2)}
+
+.messages{flex:1;overflow-y:auto;padding:22px 20px;display:flex;flex-direction:column;gap:18px;scroll-behavior:smooth}
+.messages::-webkit-scrollbar{width:4px}
+.messages::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+
+.welcome{text-align:center;padding:36px 20px;animation:fadeUp .6s ease}
+.w-ava{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#7c6fff,#a855f7);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 16px;box-shadow:0 0 40px rgba(124,111,255,.35)}
+.welcome h2{font-size:1.4rem;font-weight:700;margin-bottom:8px}
+.welcome p{color:var(--text2);font-size:.94rem;max-width:340px;margin:0 auto}
+
+.row{display:flex;gap:10px;align-items:flex-end;animation:fadeUp .3s ease}
+.row.user{flex-direction:row-reverse}
+.m-ava{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.85rem}
+.row.ai   .m-ava{background:linear-gradient(135deg,#7c6fff,#a855f7)}
+.row.user .m-ava{background:linear-gradient(135deg,#374151,#4b5563)}
+.bubble{max-width:76%;padding:11px 15px;border-radius:18px;font-size:.93rem;line-height:1.72}
+.row.ai   .bubble{background:#16161f;border:1px solid var(--border);border-bottom-right-radius:6px}
+.row.user .bubble{background:#1e1c2e;border:1px solid rgba(124,111,255,.3);border-bottom-left-radius:6px}
+.row.error .bubble{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);color:#f87171;border-radius:12px}
+.btime{font-size:.68rem;color:var(--text3);display:block;margin-top:5px}
+.row.user .btime{text-align:right}
+
+.typing-row{display:flex;gap:10px;align-items:flex-end}
+.typing-bub{background:#16161f;border:1px solid var(--border);border-radius:18px 18px 6px 18px;padding:14px 18px;display:flex;gap:5px;align-items:center}
+.tdot{width:7px;height:7px;border-radius:50%;background:var(--accent2);animation:bounce 1.2s ease infinite}
+.tdot:nth-child(2){animation-delay:.15s}
+.tdot:nth-child(3){animation-delay:.3s}
+
+.input-area{padding:14px 20px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0}
+.input-row{display:flex;gap:10px;align-items:flex-end;background:var(--surface2);border:1px solid var(--border2);border-radius:16px;padding:10px 12px;transition:border-color .2s}
+.input-row:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,111,255,.1)}
+textarea{flex:1;background:transparent;border:none;outline:none;resize:none;color:var(--text);font-family:inherit;font-size:.93rem;line-height:1.6;direction:rtl;max-height:120px;min-height:24px}
+textarea::placeholder{color:var(--text3)}
+.send-btn{width:40px;height:40px;flex-shrink:0;background:linear-gradient(135deg,#7c6fff,#a855f7);border:none;border-radius:12px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;box-shadow:0 4px 16px rgba(124,111,255,.3)}
+.send-btn:hover{transform:scale(1.05)}
+.send-btn:disabled{opacity:.35;transform:none;cursor:not-allowed}
+.hint{text-align:center;color:var(--text3);font-size:.72rem;margin-top:8px}
+
+.bubble code{background:rgba(124,111,255,.15);padding:2px 6px;border-radius:5px;font-family:monospace;font-size:.85em;color:var(--accent2)}
+.bubble pre{background:#0d0d12;border:1px solid var(--border);border-radius:10px;padding:14px;overflow-x:auto;margin:8px 0;direction:ltr;text-align:left}
+.bubble pre code{background:none;padding:0;color:#e2e8f0;font-size:.82rem}
+.bubble strong{color:var(--accent2);font-weight:600}
+.bubble ul,.bubble ol{padding-right:20px;margin:6px 0}
+.bubble li{margin:3px 0}
+.bubble p{margin:4px 0}
+.bubble h3{color:var(--accent2);margin:8px 0 4px;font-size:1rem}
+
+@keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-6px);opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+@media(max-width:500px){
+  .chips{gap:6px;padding:8px 14px}
+  .messages{padding:14px 12px}
+  .input-area{padding:10px 12px}
+  header{padding:10px 14px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="ava">🤖</div>
+  <div class="hinfo">
+    <h1>آریا</h1>
+    <p>دستیار هوشمند فارسی</p>
+  </div>
+  <button class="hbtn" id="clearBtn" onclick="clearChat()">🗑 پاک کردن</button>
+</header>
+
+<div class="chips">
+  <button class="chip" onclick="quick('سلام! خودت رو معرفی کن')">👋 معرفی</button>
+  <button class="chip" onclick="quick('یه شعر فارسی زیبا برام بگو')">📝 شعر</button>
+  <button class="chip" onclick="quick('چند جوک باحال بگو')">😄 جوک</button>
+  <button class="chip" onclick="quick('برنامه‌نویسی Python رو چطور یاد بگیرم؟')">💻 پایتون</button>
+  <button class="chip" onclick="quick('یه ایده کسب‌وکار جالب بهم بده')">💡 ایده</button>
+  <button class="chip" onclick="quick('هوش مصنوعی آینده رو چطور می‌بینی؟')">🔮 آینده AI</button>
+</div>
+
+<div class="messages" id="messages">
+  <div class="welcome" id="welcome">
+    <div class="w-ava">🤖</div>
+    <h2>سلام! من آریام 👋</h2>
+    <p>یه دستیار هوشمند فارسی. می‌تونم به هر سوالی جواب بدم، کمکت کنم یاد بگیری، یا فقط باهات حرف بزنم!</p>
+  </div>
+</div>
+
+<div class="input-area">
+  <div class="input-row">
+    <textarea id="inp" rows="1" placeholder="هر چیزی می‌خوای بپرس..." onkeydown="onKey(event)" oninput="resize(this);toggleSend()"></textarea>
+    <button class="send-btn" id="sendBtn" disabled onclick="sendMsg()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+      </svg>
+    </button>
+  </div>
+  <div class="hint">Enter برای ارسال &nbsp;·&nbsp; Shift+Enter برای خط جدید</div>
+</div>
+
+<script>
+let history = [];
+let loading = false;
+
+function now() { return new Date().toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'}); }
+
+function resize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+function toggleSend() {
+  document.getElementById('sendBtn').disabled = !document.getElementById('inp').value.trim() || loading;
+}
+function onKey(e) {
+  if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
+}
+function quick(t) {
+  document.getElementById('inp').value = t;
+  resize(document.getElementById('inp'));
+  sendMsg();
+}
+
+function addMsg(role, text) {
+  document.getElementById('welcome')?.remove();
+  document.getElementById('clearBtn').style.display = 'block';
+
+  const msgs = document.getElementById('messages');
+  const row  = document.createElement('div');
+  row.className = `row ${role}`;
+
+  const ava  = document.createElement('div');
+  ava.className = 'm-ava';
+  ava.textContent = role==='user' ? '👤' : '🤖';
+
+  const bub  = document.createElement('div');
+  bub.className = 'bubble';
+  if (role==='ai') bub.innerHTML = md(text);
+  else bub.textContent = text;
+
+  const t = document.createElement('span');
+  t.className = 'btime'; t.textContent = now();
+  bub.appendChild(t);
+
+  if (role!=='error') row.appendChild(ava);
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping() {
+  const msgs = document.getElementById('messages');
+  const row  = document.createElement('div');
+  row.className='typing-row'; row.id='typing';
+  const ava  = document.createElement('div');
+  ava.className='m-ava'; ava.textContent='🤖';
+  const bub  = document.createElement('div');
+  bub.className='typing-bub';
+  bub.innerHTML='<div class="tdot"></div><div class="tdot"></div><div class="tdot"></div>';
+  row.appendChild(ava); row.appendChild(bub);
+  msgs.appendChild(row);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+function removeTyping() { document.getElementById('typing')?.remove(); }
+
+function md(t) {
+  t = t.replace(/```[\w]*\n?([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+  t = t.replace(/`([^`]+)`/g, '<code>$1</code>');
+  t = t.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  t = t.replace(/\*(.+?)\*/g, '<em>$1</em>');
+  t = t.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+  t = t.replace(/^[-•] (.+)$/gm, '<li>$1</li>');
+  t = t.replace(/(<li>[\s\S]+?<\/li>)/g, '<ul>$1</ul>');
+  t = t.replace(/\n\n/g, '</p><p>');
+  t = t.replace(/\n/g, '<br>');
+  return '<p>' + t + '</p>';
+}
+
+async function sendMsg() {
+  const inp  = document.getElementById('inp');
+  const text = inp.value.trim();
+  if (!text || loading) return;
+
+  inp.value = ''; inp.style.height='auto';
+  loading = true; toggleSend();
+
+  addMsg('user', text);
+  history.push({role:'user', content:text});
+  showTyping();
+
+  try {
+    const res  = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ messages: history }),
+    });
+    const data = await res.json();
+    removeTyping();
+    if (data.error) throw new Error(data.error.message);
+    const reply = data.content.map(b=>b.text||'').join('');
+    history.push({role:'assistant', content:reply});
+    addMsg('ai', reply);
+  } catch(e) {
+    removeTyping();
+    addMsg('error', '⚠️ خطا: ' + e.message);
+    history.pop();
+  }
+
+  loading = false; toggleSend(); inp.focus();
+}
+
+function clearChat() {
+  history = [];
+  const msgs = document.getElementById('messages');
+  msgs.innerHTML = `<div class="welcome" id="welcome">
+    <div class="w-ava">🤖</div>
+    <h2>سلام! من آریام 👋</h2>
+    <p>یه دستیار هوشمند فارسی. می‌تونم به هر سوالی جواب بدم، کمکت کنم یاد بگیری، یا فقط باهات حرف بزنم!</p>
+  </div>`;
+  document.getElementById('clearBtn').style.display='none';
+}
+</script>
+</body>
+</html>
